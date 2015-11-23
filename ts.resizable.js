@@ -22,7 +22,11 @@
     function Resizable () {
         return {
             restrict: "A",
+            scope: {
+                "onResize": "&onresize"
+            },
             link: function (scope, element, attrs) {
+                console.log(scope.onResize);
                 var all = element.children('div');
                 var calculated = null;
                 var horizontal = attrs.direction === "horizontal";
@@ -32,7 +36,7 @@
                         calculated = elem;
                     }
                     if (elem.getAttribute("resizer") !== null) {
-                        Resizer(elem, all[index - 1], all[index + 1], horizontal)
+                        Resizer(elem, all[index - 1], all[index + 1], horizontal, scope.onResize)
                     }
                 });
 
@@ -55,8 +59,10 @@
             }
         }
     }
+    Resizable.$inject = [];
 
-    function Resizer (resizerElement, prevElement, nextElement, horizontal) {
+    function Resizer (resizerElement, prevElement, nextElement, horizontal, onResize) {
+        onResize || (onResize = angular.noop);
         var startPosition, startDimension1, startDimension2;
         resizerElement.style.cursor = horizontal ? "col-resize" : "row-resize";
         resizerElement.addEventListener("mousedown",onMouseDown);
@@ -76,6 +82,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.width = dimension1 + 'px';
                     nextElement.style.width = dimension2 + 'px';
+                    onResize();
                 }
             } else {
                 var dimension1 = startDimension1 + event.clientY - startPosition;
@@ -83,6 +90,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.height = dimension1 + 'px';
                     nextElement.style.height = dimension2 + 'px';
+                    onResize();
                 }
             }
         }

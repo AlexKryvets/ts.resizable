@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="ts.resizable">
+<html ng-app="app">
 <head lang="en">
     <meta charset="UTF-8">
     <title>Resizable</title>
@@ -28,9 +28,18 @@
             background: #bebebe;
         }
     </style>
+    <script>
+        angular.module("app", ["ts.resizable"]).controller("AppController", AppController)
+        function AppController ($scope) {
+            $scope.onResize = function () {
+                console.log("here")
+            };
+        }
+        AppController.$inject = ["$scope"];
+    </script>
 </head>
-<body>
-    <div ts-resizable="" direction="horizontal" style="height:100%; font-size: 0">
+<body ng-controller="AppController">
+    <div ts-resizable="" direction="horizontal" onresize="onResize" style="height:100%; font-size: 0">
         <div style="min-width: 200px; display: inline-block; height: 100%;background: red">
 
         </div>
