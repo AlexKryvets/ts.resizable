@@ -4,6 +4,21 @@
 
     angular.module("ts.resizable", []).directive("tsResizable", Resizable);
 
+    function getStyle(element, property){
+        var value = undefined;
+        if (window.getComputedStyle) {
+            if (window.getComputedStyle.getPropertyValue){
+                value = window.getComputedStyle(element, null).getPropertyValue(property)
+            } else {
+                value = window.getComputedStyle(element)[property];
+            }
+        } else if (element.currentStyle) {
+            value = element.currentStyle[property];
+        }
+
+        return value;
+    }
+
     function Resizable () {
         return {
             restrict: "A",
@@ -32,7 +47,6 @@
                     });
                     if (horizontal) {
                         calculated.style.width = (element[0].offsetWidth - dimension)  + "px";
-                        console.log(element[0].offsetWidth, dimension)
                     } else {
                         calculated.style.height = (element[0].offsetHeight - dimension)  + "px";
                     }
@@ -58,17 +72,43 @@
 
         function onMouseMove (event) {
             if (horizontal) {
-                prevElement.style.width = (startDimension1 + event.clientX - startPosition) + 'px';
-                nextElement.style.width = (startDimension2 - event.clientX + startPosition) + 'px';
+                var dimension1 = startDimension1 + event.clientX - startPosition;
+                var dimension2 = startDimension2 - event.clientX + startPosition;
+                if (checkDimensions(dimension1, dimension2)) {
+                    prevElement.style.width = dimension1 + 'px';
+                    nextElement.style.width = dimension2 + 'px';
+                }
             } else {
-                prevElement.style.height = (startDimension1 + event.clientY - startPosition) + 'px';
-                nextElement.style.height = (startDimension2 - event.clientY + startPosition) + 'px';
+                var dimension1 = startDimension1 + event.clientY - startPosition;
+                var dimension2 = startDimension2 - event.clientY + startPosition;
+                if (checkDimensions(dimension1, dimension2)) {
+                    prevElement.style.height = dimension1 + 'px';
+                    nextElement.style.height = dimension2 + 'px';
+                }
             }
         }
 
         function onMouseUp (event) {
             document.documentElement.removeEventListener('mousemove', onMouseMove, false);
             document.documentElement.removeEventListener('mouseup', onMouseUp, false);
+        }
+
+        function checkDimensions (dimension1, dimension2) {
+            if (horizontal) {
+                var prevMax = parseInt(getStyle(prevElement, "max-width"), 10);
+                var prevMin = parseInt(getStyle(prevElement, "min-width"), 10);
+                var nextMax = parseInt(getStyle(nextElement, "max-width"), 10);
+                var nextMin = parseInt(getStyle(nextElement, "min-width"), 10);
+            } else {
+                var prevMax = parseInt(getStyle(prevElement, "max-height"), 10);
+                var prevMin = parseInt(getStyle(prevElement, "min-height"), 10);
+                var nextMax = parseInt(getStyle(nextElement, "max-height"), 10);
+                var nextMin = parseInt(getStyle(nextElement, "min-height"), 10);
+            }
+            var isPositive = dimension1 > 0 && dimension2 > 0;
+            var isMinCorrect = (!prevMin ||prevMin < dimension1) && (!nextMin || nextMin < dimension2);
+            var isMaxCorrect = (!prevMax || prevMax < dimension1) && (!nextMax || nextMax > dimension2);
+            return isPositive && isMinCorrect && isMaxCorrect
         }
     }
 })(window, window.angular);

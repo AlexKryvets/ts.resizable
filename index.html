@@ -31,7 +31,7 @@
 </head>
 <body>
     <div ts-resizable="" direction="horizontal" style="height:100%; font-size: 0">
-        <div style="width: 200px; display: inline-block; height: 100%;background: red">
+        <div style="min-width: 200px; display: inline-block; height: 100%;background: red">
 
         </div>
         <div style="display: inline-block;width: 10px; height: 100%;" resizer></div>
@@ -41,7 +41,7 @@
                 <div style="height: 10px" resizer></div>
                 <div id="block2" calculated></div>
                 <div style="height: 10px" resizer></div>
-                <div id="block3"></div>
+                <div id="block3" style="max-height: 200px"></div>
             </div>
         </div>
 
