@@ -1,0 +1,16 @@
+{
+    "name": "ts.resizable",
+    "version": "0.0.0",
+    "authors": [
+        "Aleksey Kryvets <alex.kryvets@gmail.com>"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components"
+    ],
+    "dependencies": {
+        "angular": "~1.4.*"
+    }
+}
