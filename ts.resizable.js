@@ -57,7 +57,6 @@
     }
 
     function Resizer (resizerElement, prevElement, nextElement, horizontal) {
-        console.log(horizontal)
         var startPosition, startDimension1, startDimension2;
         resizerElement.style.cursor = horizontal ? "col-resize" : "row-resize";
         resizerElement.addEventListener("mousedown",onMouseDown);
