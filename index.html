@@ -31,15 +31,15 @@
     <script>
         angular.module("app", ["ts.resizable"]).controller("AppController", AppController)
         function AppController ($scope) {
-            $scope.onResize = function () {
-                console.log("here")
-            };
+            this.onResize = function (d1, d2) {
+                console.log(this, d1, d2)
+            }.bind(this);
         }
         AppController.$inject = ["$scope"];
     </script>
 </head>
-<body ng-controller="AppController">
-    <div ts-resizable="" direction="horizontal" onresize="onResize" style="height:100%; font-size: 0">
+<body ng-controller="AppController as ctrl">
+    <div ts-resizable="" direction="horizontal" onresize="ctrl.onResize" style="height:100%; font-size: 0">
         <div style="min-width: 200px; display: inline-block; height: 100%;background: red">
 
         </div>

@@ -23,10 +23,9 @@
         return {
             restrict: "A",
             scope: {
-                "onResize": "&onresize"
+                "onResize": "=onresize"
             },
             link: function (scope, element, attrs) {
-                console.log(scope.onResize);
                 var all = element.children('div');
                 var calculated = null;
                 var horizontal = attrs.direction === "horizontal";
@@ -82,7 +81,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.width = dimension1 + 'px';
                     nextElement.style.width = dimension2 + 'px';
-                    onResize();
+                    onResize(dimension1, dimension2);
                 }
             } else {
                 var dimension1 = startDimension1 + event.clientY - startPosition;
@@ -90,7 +89,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.height = dimension1 + 'px';
                     nextElement.style.height = dimension2 + 'px';
-                    onResize();
+                    onResize(dimension1, dimension2);
                 }
             }
         }
