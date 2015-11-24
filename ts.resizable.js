@@ -4,6 +4,12 @@
 
     angular.module("ts.resizable", []).directive("tsResizable", Resizable);
 
+    function abstractMethod() {}
+
+    function ResizableDelegate() {
+        this.onResize = abstractMethod;
+    }
+
     function getStyle(element, property){
         var value = undefined;
         if (window.getComputedStyle) {
@@ -23,9 +29,11 @@
         return {
             restrict: "A",
             scope: {
-                "onResize": "=onresize"
+                "delegate": "="
             },
             link: function (scope, element, attrs) {
+                scope.delegate = angular.extend(new ResizableDelegate, scope.delegate);
+
                 var all = element.children('div');
                 var calculated = null;
                 var horizontal = attrs.direction === "horizontal";
@@ -35,7 +43,7 @@
                         calculated = elem;
                     }
                     if (elem.getAttribute("resizer") !== null) {
-                        Resizer(elem, all[index - 1], all[index + 1], horizontal, scope.onResize)
+                        Resizer(elem, all[index - 1], all[index + 1], horizontal, scope.delegate)
                     }
                 });
 
@@ -60,8 +68,7 @@
     }
     Resizable.$inject = [];
 
-    function Resizer (resizerElement, prevElement, nextElement, horizontal, onResize) {
-        onResize || (onResize = angular.noop);
+    function Resizer (resizerElement, prevElement, nextElement, horizontal, delegate) {
         var startPosition, startDimension1, startDimension2;
         resizerElement.style.cursor = horizontal ? "col-resize" : "row-resize";
         resizerElement.addEventListener("mousedown",onMouseDown);
@@ -81,7 +88,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.width = dimension1 + 'px';
                     nextElement.style.width = dimension2 + 'px';
-                    onResize(dimension1, dimension2);
+                    delegate.onResize(dimension1, dimension2);
                 }
             } else {
                 var dimension1 = startDimension1 + event.clientY - startPosition;
@@ -89,7 +96,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.height = dimension1 + 'px';
                     nextElement.style.height = dimension2 + 'px';
-                    onResize(dimension1, dimension2);
+                    delegate.onResize(dimension1, dimension2);
                 }
             }
         }
