@@ -30,34 +30,37 @@
     </style>
     <script>
         angular.module("app", ["ts.resizable"]).controller("AppController", AppController)
-        function Delegate (ctrl) {
+        function Delegate(ctrl) {
             this.onResize = function () {
                 console.log(ctrl)
             };
         }
 
-        function AppController ($scope) {
+        function AppController($scope) {
             this.delegate = new Delegate(this);
         }
         AppController.$inject = ["$scope"];
     </script>
 </head>
 <body ng-controller="AppController as ctrl">
-    <div ts-resizable="" direction="horizontal" delegate="ctrl.delegate" style="height:100%; font-size: 0">
-        <div style="min-width: 200px; display: inline-block; height: 100%;background: red">
+    <div ts-resizable="" direction="vertical" style="height:100%;">
+        <div ts-resizable="" direction="horizontal" calculated delegate="ctrl.delegate" style="font-size: 0">
+            <div style="min-width: 200px; display: inline-block; height: 100%;background: red">
 
-        </div>
-        <div style="display: inline-block;width: 10px; height: 100%;" resizer></div>
-        <div style="display: inline-block; height:100%; " calculated>
-            <div ts-resizable="" direction="vertical" style="height:100%;">
-                <div id="block1"></div>
-                <div style="height: 10px" resizer></div>
-                <div id="block2" calculated></div>
-                <div style="height: 10px" resizer></div>
-                <div id="block3" style="max-height: 200px"></div>
+            </div>
+            <div style="display: inline-block;width: 10px; height: 100%;" resizer></div>
+            <div style="display: inline-block; height:100%; " calculated>
+                <div ts-resizable="" direction="vertical" style="height:100%;">
+                    <div id="block1"></div>
+                    <div style="height: 10px" resizer></div>
+                    <div id="block2" calculated></div>
+                    <div style="height: 10px" resizer></div>
+                    <div id="block3" style="max-height: 200px"></div>
+                </div>
             </div>
         </div>
-
+        <div style="height: 10px" resizer></div>
+        <div style="height: 150px; background: #cbcbcb;"></div>
     </div>
 </body>
 </html>
