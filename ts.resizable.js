@@ -29,7 +29,7 @@
         return {
             restrict: "A",
             scope: {
-                "delegate": "="
+                "delegate": "=?"
             },
             compile: function () {
                 return {
