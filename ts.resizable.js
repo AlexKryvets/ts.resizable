@@ -29,46 +29,51 @@
         return {
             restrict: "A",
             scope: {
-                "delegate": "="
+                "delegate": "=?"
             },
-            link: function (scope, element, attrs) {
-                scope.delegate = angular.extend(new ResizableDelegate, scope.delegate);
+            compile: function compile(tElement, tAttrs, transclude) {
+                return {
+                    pre: function (scope, element, attrs) {
+                        scope.delegate = angular.extend(new ResizableDelegate, scope.delegate);
 
-                var all = element.children('div');
-                var calculated = null;
-                var horizontal = attrs.direction === "horizontal";
+                        var all = element.children('div');
+                        var calculated = null;
+                        var horizontal = attrs.direction === "horizontal";
 
-                angular.forEach(all, function (elem, index) {
-                    if (elem.getAttribute("calculated") !== null) {
-                        calculated = elem;
-                    }
-                    if (elem.getAttribute("resizer") !== null) {
-                        Resizer(elem, all[index - 1], all[index + 1], horizontal, scope.delegate)
-                    }
-                });
+                        angular.forEach(all, function (elem, index) {
+                            if (elem.getAttribute("calculated") !== null) {
+                                calculated = elem;
+                            }
+                            if (elem.getAttribute("resizer") !== null) {
+                                Resizer(elem, all[index - 1], all[index + 1], horizontal, scope)
+                            }
+                        });
 
-                window.addEventListener('resize', calculateDimension, false);
+                        window.addEventListener('resize', calculateDimension, false);
+                        scope.$on("ts:resize", calculateDimension);
 
-                function calculateDimension () {
-                    var dimension = 0;
-                    angular.forEach(all, function (elem) {
-                        if (elem.getAttribute("calculated") === null) {
-                            dimension += horizontal ? elem.offsetWidth : elem.offsetHeight;
+                        function calculateDimension () {
+                            var dimension = 0;
+                            angular.forEach(all, function (elem) {
+                                if (elem.getAttribute("calculated") === null) {
+                                    dimension += horizontal ? elem.offsetWidth : elem.offsetHeight;
+                                }
+                            });
+                            if (horizontal) {
+                                calculated.style.width = (element[0].offsetWidth - dimension)  + "px";
+                            } else {
+                                calculated.style.height = (element[0].offsetHeight - dimension)  + "px";
+                            }
                         }
-                    });
-                    if (horizontal) {
-                        calculated.style.width = (element[0].offsetWidth - dimension)  + "px";
-                    } else {
-                        calculated.style.height = (element[0].offsetHeight - dimension)  + "px";
+                        calculateDimension();
                     }
                 }
-                calculateDimension();
             }
         }
     }
     Resizable.$inject = [];
 
-    function Resizer (resizerElement, prevElement, nextElement, horizontal, delegate) {
+    function Resizer (resizerElement, prevElement, nextElement, horizontal, scope) {
         var startPosition, startDimension1, startDimension2;
         resizerElement.style.cursor = horizontal ? "col-resize" : "row-resize";
         resizerElement.addEventListener("mousedown",onMouseDown);
@@ -88,7 +93,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.width = dimension1 + 'px';
                     nextElement.style.width = dimension2 + 'px';
-                    delegate.onResize(dimension1, dimension2);
+                    scope.delegate.onResize(dimension1, dimension2);
                 }
             } else {
                 var dimension1 = startDimension1 + event.clientY - startPosition;
@@ -96,7 +101,7 @@
                 if (checkDimensions(dimension1, dimension2)) {
                     prevElement.style.height = dimension1 + 'px';
                     nextElement.style.height = dimension2 + 'px';
-                    delegate.onResize(dimension1, dimension2);
+                    scope.delegate.onResize(dimension1, dimension2);
                 }
             }
         }
